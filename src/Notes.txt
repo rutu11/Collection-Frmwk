@@ -1,0 +1,78 @@
+Lambda Expression (a, b) -> a - b:
+1. Subtracts b from a.
+2. If the result is positive (a > b), a is considered bigger.
+3. If the result is negative (a < b), b is bigger.
+
+--------------------------------
+
+a.getSalary() - b.getSalary() works if getSalary() returns an int. But if getSalary() returns a double or float, it won’t even compile.
+Even with int, this approach can cause integer overflow or underflow for large values, leading to incorrect results.
+Therefore, use Double.compare() OR Comparator.comparing()
+
+--------------------------------
+COMPARING(), COMPARETO(), COMPARE()
+
+ 1. Comparator.comparing()
+Part of: Comparator interface (from java.util)
+Purpose: Creates a comparator based on a key extractor function.
+Usage: When you want to create a comparator using a method reference or lambda.
+
+🖋 Example:
+empList.stream()
+    .max(Comparator.comparing(Employee::getSalary));
+Here, Employee::getSalary is a key extractor, and comparing turns it into a comparator!
+
+➡️ Equivalent to:
+Comparator<Employee> comparator = (a, b) -> Double.compare(a.getSalary(), b.getSalary());
+
+✅ Key points:
+Used to compare objects by a specific field.
+Can be chained with .thenComparing() for multi-field sorting.
+***********
+
+2. compareTo()
+Part of: Comparable interface (from java.lang)
+Purpose: Defines a natural ordering for objects.
+Usage: When you want an object to compare itself with another object.
+
+🖋 Example:
+public class Employee implements Comparable<Employee> {
+    private String name;
+    private double salary;
+
+    @Override
+    public int compareTo(Employee other) {
+        return Double.compare(this.salary, other.salary);
+    }
+}
+
+Now you can use:
+empList.stream().max(Employee::compareTo);
+
+✅ Key points:
+You need to implement Comparable.
+The object itself knows how to compare with another object.
+It returns:
+0 → if equal
+< 0 → if smaller
+> 0 → if larger
+***********
+
+3. compare()
+Part of: Comparator interface (static method)
+Purpose: Directly compares two values.
+Usage: When you want to compare two values manually, especially primitives.
+
+🖋 Example:
+empList.stream()
+    .max((a, b) -> Double.compare(a.getSalary(), b.getSalary()));
+
+Or:
+int result = Double.compare(5.5, 3.2); // result = 1
+
+✅ Key points:
+Useful for primitive comparisons (int, double, etc.).
+Handles edge cases (like NaN or negative zero).
+Cleaner than manual subtraction (a - b).
+
+
